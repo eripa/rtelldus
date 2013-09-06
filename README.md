@@ -1,6 +1,6 @@
 # Rtelldus
 
-TODO: Write a gem description
+Ruby Framework for accessing the Telldus Live! API.
 
 ## Installation
 
@@ -18,7 +18,9 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Rename config-template.yaml to config.yaml and add your Telldus keys (can be generated at [api.telldus.com](http://api.telldus.com/keys/index))
+
+Use Rtelldus.auth to authenticate and get an access_token. The first time you run you will have to follow the onscreen instructions to properly authenticate using OAuth, the access_token and access_secret will then be saved in ~/.rtelldus
 
 ## Contributing
 
