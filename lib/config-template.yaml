@@ -1,0 +1,7 @@
+telldus-api:
+  api_host: http://api.telldus.com
+  request_token_path: /oauth/requestToken
+  access_token_path: /oauth/accessToken
+  authorize_path: /oauth/authorize
+  consumer_key: Insert your Telldus Live API public key here
+  consumer_secret: Insert your Telldus Live private key here
