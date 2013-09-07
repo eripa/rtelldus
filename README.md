@@ -18,9 +18,33 @@ Or install it yourself as:
 
 ## Usage
 
-Rename config-template.yaml to config.yaml and add your Telldus keys (can be generated at [api.telldus.com](http://api.telldus.com/keys/index))
+Generate your Telldus public and private keys at [api.telldus.com](http://api.telldus.com/keys/index)
 
-Use Rtelldus.auth to authenticate and get an access_token. The first time you run you will have to follow the onscreen instructions to properly authenticate using OAuth, the access_token and access_secret will then be saved in ~/.rtelldus
+Use Rtelldus.authorize to authenticate and get an access_token. The first time you run you will have to follow the onscreen instructions to properly authenticate using OAuth, the public and private keys will be saved together with the access token and access secret in ~/.rtelldus
+
+Authorize will be run automatically on each call if not manually run before, so you can simply just run the calls if you'd like.
+
+### Example usage:
+
+    require "rtelldus"
+
+    # Authorize
+    Rtelldus.authorize
+
+    # List all registered devices:
+    Rtelldus.devices_list
+
+    # Get the ID for the first listed device:
+    Rtelldus.devices_list["device"].first["id"]
+
+    # Turn on device:
+    Rtelldus.device_turn_on "330108"
+
+    # Turn off device:
+    Rtelldus.device_turn_off "330108"
+
+    # Dim a device (value between 0 and 255)L
+    Rtelldus.device_dim "330108", 0
 
 ## Contributing
 
