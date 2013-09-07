@@ -3,17 +3,13 @@ require 'oauth'
 require 'json'
 require 'user_config'
 
-
 module Rtelldus
   @uconf = UserConfig.new(".rtelldus")
   def self.authorize
     # Get API settings
     unless File.exists? @uconf['api_settings.yaml'].path
-      @uconf["api_settings.yaml"]["api_host"] = "http://api.telldus.com"
-      @uconf["api_settings.yaml"]["request_token_path"] = "/oauth/requestToken"
-      @uconf["api_settings.yaml"]["access_token_path"] = "/oauth/accessToken"
-      @uconf["api_settings.yaml"]["authorize_path"] = "/oauth/authorize"
-      # Get user input
+      # No configuration exists, let's request some credentials from the user
+      # Fetch the public and private keys from command line
       puts "The first time you use the API you need to enter your Public and Private keys, they can be generated at:"
       puts "\thttp://api.telldus.com/keys/index"
       puts "\nPublic Key:"
@@ -22,6 +18,12 @@ module Rtelldus
       puts "\nPrivate Key:"
       private_key = $stdin.gets.strip
       @uconf["api_settings.yaml"]["consumer_secret"] = private_key
+      ## Persistent settings
+      @uconf["api_settings.yaml"]["api_host"] = "http://api.telldus.com"
+      @uconf["api_settings.yaml"]["request_token_path"] = "/oauth/requestToken"
+      @uconf["api_settings.yaml"]["access_token_path"] = "/oauth/accessToken"
+      @uconf["api_settings.yaml"]["authorize_path"] = "/oauth/authorize"
+      # Save for later use
       @uconf["api_settings.yaml"].save
     end
 
@@ -35,7 +37,7 @@ module Rtelldus
     if File.exists? @uconf["api_token.yaml"].path
       @access_token = OAuth::AccessToken.new(consumer, @uconf["api_token.yaml"]["access_token"], @uconf["api_token.yaml"]["access_secret"])
     else
-      # No configuration exists, let's request  some access tokens
+      # No configuration exists, let's request some access tokens
       # Fetch a new access token and secret from the command line
       request_token = consumer.get_request_token
       puts "Copy and paste the following URL in your browser:"
