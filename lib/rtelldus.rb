@@ -53,7 +53,7 @@ module Rtelldus
 
   def self.clients_list
     authorize unless @access_token
-    json_txt = @access_token.post("/json/clients/list", 'x-li-format' => 'json').body
+    json_txt = @access_token.get("/json/clients/list", 'x-li-format' => 'json').body
     clients = JSON.parse(json_txt)
   end
 
