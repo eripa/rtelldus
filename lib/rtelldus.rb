@@ -8,7 +8,7 @@ require 'user_config'
 module Rtelldus
   @config = YAML.load_file 'lib/config.yaml'
   @uconf = UserConfig.new(".rtelldus")
-  def self.auth
+  def self.authorize
     oauth_options = @config['telldus-api']
     consumer_options = { :site => oauth_options['api_host'],
                          :authorize_path => oauth_options['authorize_path'],
@@ -16,9 +16,8 @@ module Rtelldus
                          :access_token_path => oauth_options['access_token_path'] }
     consumer = OAuth::Consumer.new(oauth_options['consumer_key'], oauth_options['consumer_secret'], consumer_options)
 
-
     if File.exists? @uconf["api_token.yaml"].path
-      OAuth::AccessToken.new(consumer, @uconf["api_token.yaml"]["access_token"], @uconf["api_token.yaml"]["access_secret"])
+      @access_token = OAuth::AccessToken.new(consumer, @uconf["api_token.yaml"]["access_token"], @uconf["api_token.yaml"]["access_secret"])
     else
       # No configuration exists, let's request  some access tokens
       # Fetch a new access token and secret from the command line
@@ -32,23 +31,31 @@ module Rtelldus
       @uconf["api_token.yaml"]["access_token"] = access_token.token
       @uconf["api_token.yaml"]["access_secret"] = access_token.secret
       @uconf["api_token.yaml"].save
-      OAuth::AccessToken.new(consumer, @uconf["api_token.yaml"]["access_token"], @uconf["api_token.yaml"]["access_secret"])
+      @access_token = OAuth::AccessToken.new(consumer, @uconf["api_token.yaml"]["access_token"], @uconf["api_token.yaml"]["access_secret"])
     end
   end
 
-  def self.get_devices access_token
-    json_txt = access_token.get("/json/devices/list", 'x-li-format' => 'json').body
-    devices = JSON.parse(json_txt)
-    devices["device"]
+  def self.clients_list
+    authorize unless @access_token
+    json_txt = @access_token.post("/json/clients/list", 'x-li-format' => 'json').body
+    clients = JSON.parse(json_txt)
   end
 
-  def self.turn_off access_token, device_id
-    json_txt = access_token.post("/json/device/command", {"id" => device_id, "value" => 0, "method" => 2}, 'x-li-format' => 'json').body
+  def self.devices_list
+    authorize unless @access_token
+    json_txt = @access_token.get("/json/devices/list", 'x-li-format' => 'json').body
+    devices = JSON.parse(json_txt)
+  end
+
+  def self.device_turn_off device_id
+    authorize unless @access_token
+    json_txt = @access_token.post("/json/device/turnOff", {"id" => device_id}, 'x-li-format' => 'json').body
     status = JSON.parse(json_txt)
   end
 
-  def self.turn_on access_token, device_id
-    json_txt = access_token.post("/json/device/command", {"id" => device_id, "value" => 0, "method" => 1}, 'x-li-format' => 'json').body
+  def self.device_turn_on device_id
+    authorize unless @access_token
+    json_txt = @access_token.post("/json/device/turnOn", {"id" => device_id}, 'x-li-format' => 'json').body
     status = JSON.parse(json_txt)
   end
 end
