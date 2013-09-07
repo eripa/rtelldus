@@ -73,15 +73,22 @@ module Rtelldus
     status = JSON.parse(json_txt)
   end
 
+  def self.device_turn_on device_id
+    authorize unless @access_token
+    json_txt = @access_token.post("/json/device/turnOn", {"id" => device_id}, 'x-li-format' => 'json').body
+    status = JSON.parse(json_txt)
+  end
+
   def self.device_turn_off device_id
     authorize unless @access_token
     json_txt = @access_token.post("/json/device/turnOff", {"id" => device_id}, 'x-li-format' => 'json').body
     status = JSON.parse(json_txt)
   end
 
-  def self.device_turn_on device_id
+  def self.device_dim device_id, level
+    raise "Invalid dimlevel, this value should be 0-255" if level < 0 or level > 255
     authorize unless @access_token
-    json_txt = @access_token.post("/json/device/turnOn", {"id" => device_id}, 'x-li-format' => 'json').body
+    json_txt = @access_token.post("/json/device/dim", {"id" => device_id, "level" => level}, 'x-li-format' => 'json').body
     status = JSON.parse(json_txt)
   end
 
