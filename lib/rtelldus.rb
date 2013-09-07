@@ -53,16 +53,24 @@ module Rtelldus
     end
   end
 
+  ## Clients
   def self.clients_list
     authorize unless @access_token
     json_txt = @access_token.get("/json/clients/list", 'x-li-format' => 'json').body
     clients = JSON.parse(json_txt)
   end
 
+  ## Devices
   def self.devices_list
     authorize unless @access_token
     json_txt = @access_token.get("/json/devices/list", 'x-li-format' => 'json').body
     devices = JSON.parse(json_txt)
+  end
+
+  def self.device_info device_id
+    authorize unless @access_token
+    json_txt = @access_token.post("/json/device/info", {"id" => device_id}, 'x-li-format' => 'json').body
+    status = JSON.parse(json_txt)
   end
 
   def self.device_turn_off device_id
@@ -74,6 +82,25 @@ module Rtelldus
   def self.device_turn_on device_id
     authorize unless @access_token
     json_txt = @access_token.post("/json/device/turnOn", {"id" => device_id}, 'x-li-format' => 'json').body
+    status = JSON.parse(json_txt)
+  end
+
+  def self.device_bell device_id
+    authorize unless @access_token
+    json_txt = @access_token.post("/json/device/bell", {"id" => device_id}, 'x-li-format' => 'json').body
+    status = JSON.parse(json_txt)
+  end
+
+  ## Sensors
+  def self.sensors_list
+    authorize unless @access_token
+    json_txt = @access_token.get("/json/sensors/list", 'x-li-format' => 'json').body
+    devices = JSON.parse(json_txt)
+  end
+
+  def self.sensor_info sensor_id
+    authorize unless @access_token
+    json_txt = @access_token.post("/json/sensor/info", {"id" => sensor_id}, 'x-li-format' => 'json').body
     status = JSON.parse(json_txt)
   end
 end
